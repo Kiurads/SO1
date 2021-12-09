@@ -3,34 +3,54 @@
 #include <unistd.h>
 #include <signal.h>
 #include <string.h>
-
-int contador;
+#include <time.h>
 
 void atendeSinal(int snum, siginfo_t* act, void* oldact) {
-    if (++contador == 5)
-    {
-        printf("ok, pronto\n");
-
-        exit(EXIT_FAILURE);
-    } else {
-        printf("ai\n");
-    }
-    
+    printf("\n\nTempo!\n\n");
 }
 
 int main(int argc, char **argv) {
-    char buffer[100];
-    contador = 0;
+    srand(time(NULL));
+
+    int erros;
+    int num1, num2, resposta;
+    int acertos = 0;
+    int N = 20;
     struct sigaction sa;
+
+    erros = 0;
 
     sa.sa_sigaction = atendeSinal;
 
-    sigaction(SIGINT, &sa, NULL);
+    sa.sa_flags = SA_NODEFER;
+
+    sigaction(SIGALRM, &sa, NULL);
 
     do {
-        printf("Nome: ");
-        fgets(buffer, 100, stdin);
+        if (N > 5) {
+            N--;
+        }
+        
+        num1 = rand() % 101;
+        num2 = rand() % 101;
 
-        printf("Ola, %s\n", buffer);
-    } while(strcmp(buffer, "sair") != 0);
+        resposta = -1;
+
+        printf("%d + %d = ", num1, num2);
+
+        alarm(N);
+
+        scanf("%d", &resposta);
+
+        if (resposta == (num1 + num2)) {
+            printf("Acertou!\n\n");
+            acertos++;
+        } else {
+            printf("Melhor sorte para a proxima!\n\n");
+            erros++;
+        }
+        
+    } while(erros < 2);
+
+    printf("Acabou o jogo com uma pontuacao de %d\n\n", acertos);
 }
