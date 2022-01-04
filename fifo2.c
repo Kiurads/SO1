@@ -22,7 +22,7 @@ int main() {
     
     if (fifo_fd == -1)
     {
-        perror("\nErro ao abrir/criar o FIFO");
+        perror("\nErro ao criar o FIFO");
         exit(EXIT_FAILURE);
     }
     
@@ -30,6 +30,12 @@ int main() {
     {
         fifo_fd = open(SERVER_FIFO, O_RDONLY);
 
+        if (fifo_fd = -1)
+        {
+            perror("Erro ao abrir o FIFO\n");
+            exit(EXIT_FAILURE);
+        }
+        
         memset(buffer, '\0', MAX_SIZE);
 
         read_res = read(fifo_fd, &buffer, MAX_SIZE);
